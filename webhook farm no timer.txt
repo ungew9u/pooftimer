@@ -1,0 +1,63 @@
+repeat task.wait(); until game:IsLoaded();
+repeat task.wait(); until game:GetService("Workspace").Players:FindFirstChild(game:GetService("Players").LocalPlayer.Name);
+if getgenv().blahblahblah then
+    return
+end
+
+getgenv().blahblahblah = true
+
+task.spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ungew9u/msggroup/main/msggroup"))()
+end);
+task.spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ungew9u/groupmisc/main/groupmisc"))()
+end);
+task.spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ungew9u/rightfarmgroup/main/rightfarmgroup"))()
+end);
+task.spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ungew9u/counter/main/counter"))()
+end);
+
+local http_request = request or syn.request or fluxus.request;
+
+function comma_value(amount) -- credits: https://devforum.roblox.com/t/how-would-i-make-a-large-number-have-commas/384427/2
+    local formatted = amount;
+    while true do  
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", "%1,%2");
+        if (k == 0) then
+            break;
+        end;
+    end;
+    return formatted;
+end;
+
+CASH_BEFORE = game:GetService("Players").LocalPlayer.DataFolder.Currency.Value;
+
+task.spawn(function()
+    while task.wait(Settings.Interval * 60) do
+        local data = {
+            ["embeds"] = {
+                {
+                    ["title"] = game:GetService("Players").LocalPlayer.Name .. " (" .. game:GetService("Players").LocalPlayer.DisplayName .. ")";
+                    ["description"] = "Money: $".. comma_value(game:GetService("Players").LocalPlayer.DataFolder.Currency.Value) .."\nAmount Earned: $".. comma_value(game:GetService("Players").LocalPlayer.DataFolder.Currency.Value - CASH_BEFORE);
+                    ["type"] = "rich";
+                    ["color"] = tonumber(0x2f3136);
+                    ["author"] = {
+                        ["name"] = "unges webhook thingy";
+                    };
+                    ["footer"] = {
+                        ["text"] = "Made by @sethig, @w9u";
+                    };
+                };
+            };
+        };
+
+        local encoded_data = game:GetService("HttpService"):JSONEncode(data);
+        local headers = {
+            ["content-type"] = "application/json"; 
+        };
+
+        http_request({Url = Settings.WebhookURL, Body = encoded_data, Method = "POST", Headers = headers});
+    end;
+end);
